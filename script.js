@@ -17,18 +17,121 @@ let library = []
 const container = document.querySelector('#container');
 
 
+class Book {
+    constructor(title, author, pages, read, key) {
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.read = read;
+        this.key = key;
 
-function Book(title, author, pages, read, key) {
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.read = read;
-    this.key = key;
+    }
+
+    createComponent() {
+        this.remove = document.createElement('button');
+        this.toggle = document.createElement('button');
+        this.currentBook = library[library.length - 1]
+
+        this.book = document.createElement('div');
+
+        this.bookTitle = document.createElement('h1');
+
+        this.titleLabel = document.createElement('span');
+
+        this.authorLabel = document.createElement('span')
+
+        this.pageLabel = document.createElement('span')
+
+        this.statusValue = document.createElement('span')
 
 
+        this.bookAuthor = document.createElement('h2');
+
+        this.bookPages = document.createElement('h3');
+
+        this.statusLabel = document.createElement('p');
+    }
+
+    addData() {
+        this.toggle.classList.add('toggle');
+
+        this.toggle.innerHTML = '✔';
+
+        this.remove.classList.add('remove');
+
+        this.remove.innerHTML = '✖';
+
+        this.bookTitle.textContent = this.title;
+
+        this.bookAuthor.textContent = this.author;
+
+        this.bookPages.textContent = this.pages;
+
+        this.titleLabel.textContent = 'Title: '
+
+        this.authorLabel.textContent = 'Author: '
+
+        this.pageLabel.textContent = 'Pages: '
+
+        this.statusLabel.textContent = 'Status: '
+
+        this.remove.addEventListener('click', () => {
+
+            this.book.remove();
+            library.splice(this.key, 1);// This removes the book 
+        })
 
 
+        this.toggle.addEventListener('click', () => {
+            this.statusCheck()
+        })
+    }
+    appendData() {
+        this.book.prepend(this.remove);
+        this.book.append(this.toggle)
+        this.bookTitle.prepend(this.titleLabel);
+
+        this.bookAuthor.prepend(this.authorLabel);
+
+        this.bookPages.prepend(this.pageLabel);
+
+        this.statusLabel.append(this.statusValue);
+
+        this.book.append(this.bookTitle, this.bookAuthor, this.bookPages, this.statusLabel);
+
+        shelf.appendChild(this.book)
+
+    }
+
+    statusCheck() {
+
+        if (this.read == true) {
+            this.statusValue.textContent = 'Finished'
+            this.book.classList.add('finished');
+            this.read = false;
+
+        } else if (this.read == false) {
+            this.statusValue.textContent = 'Pending'
+            this.book.classList.remove('finished');
+            this.read = true;
+        }
+    }
+
+    styleBook() {
+
+        this.children = this.book.querySelectorAll('h1, h2,h3, p')
+
+        this.book.classList.add('book-container');
+        this.children[0].classList.add('title');
+        this.children[1].classList.add('author');
+        this.children[2].classList.add('pages');
+        this.children[3].classList.add('status');
+        this.statusCheck();
+
+    }
 }
+
+
 
 
 let key = library.length;
@@ -37,146 +140,25 @@ let key = library.length;
 function newBook() {
 
 
-
     let bookData = new Book(titleData.value, authorData.value, pageNumber.value, finish.checked, library.length);
 
     library.push(bookData);
 
+    bookData.createComponent();
 
+    bookData.addData();
 
-    let remove = document.createElement('button');
+    bookData.appendData();
 
-    let toggle = document.createElement('button');
-
-
-
-    toggle.classList.add('toggle');
-
-    toggle.innerHTML = '✔';
-
-    remove.classList.add('remove');
-
-    remove.innerHTML = '✖';
-
-
-
-    let currentBook = library[library.length - 1]
-
-    let book = document.createElement('div');
-
-    let bookTitle = document.createElement('h1');
-
-    let titleLabel = document.createElement('span');
-
-    let authorLabel = document.createElement('span')
-
-    let pageLabel = document.createElement('span')
-
-    let statusValue = document.createElement('span')
-
-
-    let bookAuthor = document.createElement('h2');
-
-    let bookPages = document.createElement('h3');
-
-    let statusLabel = document.createElement('p');
-
-
-    bookTitle.textContent = currentBook.title;
-    bookAuthor.textContent = currentBook.author;
-    bookPages.textContent = currentBook.pages;
-
-
-    console.log(statusLabel)
-
-
-    titleLabel.textContent = 'Title: '
-
-    authorLabel.textContent = 'Author: '
-
-    pageLabel.textContent = 'Pages: '
-
-    statusLabel.textContent = 'Status: '
-
-    book.prepend(remove);
-
-    book.append(toggle)
-
-    statusCheck(currentBook, book, statusValue)
-
-    remove.addEventListener('click', (e) => {
-
-        book.remove();
-        library.splice(bookData.key, 1);// This removes the book 
-    })
-
-
-    toggle.addEventListener('click', () => {
-
-
-
-
-
-
-        statusCheck(currentBook, book, statusValue)
-
-
-
-
-    })
-
-    bookTitle.prepend(titleLabel);
-
-    bookAuthor.prepend(authorLabel);
-
-    bookPages.prepend(pageLabel);
-
-    statusLabel.append(statusValue);
-
-    book.append(bookTitle, bookAuthor, bookPages, statusLabel);
-
-    shelf.appendChild(book)
-
-
-    styleBook(bookData, book);
+    bookData.styleBook();
 
 
 
 };
 
-function statusCheck(status, target, content) {
-
-    if (status.read == true) {
-        content.textContent = 'Finished'
-        target.classList.add('finished');
-        status.read = false;
-
-    } else if (status.read == false) {
-        content.textContent = 'Pending'
-        target.classList.remove('finished');
-        status.read = true;
-    }
-}
-
-
-function styleBook(bookD, bookR) {
-
-    let children = bookR.querySelectorAll('h1, h2,h3, p')
-
-    bookR.classList.add('book-container');
-    children[0].classList.add('title');
-    children[1].classList.add('author');
-    children[2].classList.add('pages');
-    children[3].classList.add('status');
 
 
 
-
-    statusCheck(bookD, bookR)
-
-
-
-}
 
 button.addEventListener('click', newBook)
 
