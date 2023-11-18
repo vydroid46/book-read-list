@@ -6,13 +6,16 @@ const shelf = document.querySelector('#bookshelf')
 
 const pageNumber = document.querySelector('#page');
 
+const saveBtn = document.querySelector('#saveBtn');
+
 let finish = document.getElementById('finish');
 
 
 const button = document.querySelector('#button');
-
+let count = 0;
 let library = []
-
+let savedLib = JSON.parse(window.localStorage.getItem('bookdata'))
+// let count = savedLib !== null ? savedLib.map((item) => item.key).length : library.length;
 
 const container = document.querySelector('#container');
 
@@ -30,7 +33,7 @@ class Book {
     createComponent() {
         this.remove = document.createElement('button');
         this.toggle = document.createElement('button');
-        this.currentBook = library[library.length - 1]
+
 
         this.book = document.createElement('div');
 
@@ -77,13 +80,28 @@ class Book {
 
         this.remove.addEventListener('click', () => {
 
-            this.book.remove();
             library.splice(this.key, 1);// This removes the book 
+            this.book.remove();
+            for (let i = 0; i < library.length; i++) {
+
+                reAssign(library[i])
+
+            }
         })
 
 
         this.toggle.addEventListener('click', () => {
-            this.statusCheck()
+            console.log('clicked')
+            if (this.read === true) {
+                this.read = false;
+                console.log(this)
+                this.statusCheck()
+            } else {
+
+                this.read = true;
+                console.log(this)
+                this.statusCheck()
+            }
         })
     }
     appendData() {
@@ -104,16 +122,16 @@ class Book {
     }
 
     statusCheck() {
-
+        console.log(library)
         if (this.read == true) {
             this.statusValue.textContent = 'Finished'
             this.book.classList.add('finished');
-            this.read = false;
+
 
         } else if (this.read == false) {
             this.statusValue.textContent = 'Pending'
             this.book.classList.remove('finished');
-            this.read = true;
+
         }
     }
 
@@ -129,20 +147,37 @@ class Book {
         this.statusCheck();
 
     }
+    initIndex() {
+        this.key = library.indexOf(this);
+    }
 }
 
+function reAssign(item) {
+    item.key = library.indexOf(item)
+
+}
+
+function initBook(title, author, pages, read, key) {
 
 
+    let bookData = new Book(title, author, pages, read, key);
+    console.log(bookData)
 
-let key = library.length;
+    return bookData;
+}
 
-
-function newBook() {
-
-
-    let bookData = new Book(titleData.value, authorData.value, pageNumber.value, finish.checked, library.length);
+function newBook(bookData) {
 
     library.push(bookData);
+    bookData.initIndex();
+    console.log(library.indexOf(bookData))
+
+    loadBook(bookData);
+
+};
+
+function loadBook(bookData) {
+
 
     bookData.createComponent();
 
@@ -153,15 +188,52 @@ function newBook() {
     bookData.styleBook();
 
 
-
-};
-
-
+    shelf.style.display = 'grid'
+}
 
 
+function saveData(data) {
+    window.localStorage.setItem('bookdata', JSON.stringify(data))
 
-button.addEventListener('click', newBook)
+    console.log(localStorage.getItem('bookdata'));
+}
+
+
+async function loadContent() {
+
+    if (!window.localStorage.getItem('bookdata')) {
+        shelf.style.display = 'none'
+
+    }
+    else {
+        console.log('Getting the local data')
+        let bookData = await JSON.parse(window.localStorage.getItem('bookdata'))
+        library = await [...bookData]
+        library.forEach((item) => {
+
+            let bookData = initBook(item.title, item.author, item.pages, item.read, item.key)
+            loadBook(bookData);
+        })
+        shelf.style.display = 'grid';
+    }
+
+
+}
+
+loadContent()
+
+
+button.addEventListener('click', () => { newBook(initBook(titleData.value, authorData.value, pageNumber.value, finish.checked)) })
+
+
+saveBtn.addEventListener('click', () => {
+    saveData(library)
+
+    console.log(window.localStorage.getItem('bookdata'))
+    console.log('saved')
+})
 
 
 
 
+window.localStorage.clear()
