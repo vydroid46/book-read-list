@@ -1,7 +1,7 @@
 const authorData = document.querySelector('#author');
 
+const clearBtn = document.querySelector('#clearBtn');
 const titleData = document.querySelector('#title');
-
 const shelf = document.querySelector('#bookshelf')
 
 const pageNumber = document.querySelector('#page');
@@ -10,12 +10,10 @@ const saveBtn = document.querySelector('#saveBtn');
 
 let finish = document.getElementById('finish');
 
-
 const button = document.querySelector('#button');
-let count = 0;
+
 let library = []
-let savedLib = JSON.parse(window.localStorage.getItem('bookdata'))
-// let count = savedLib !== null ? savedLib.map((item) => item.key).length : library.length;
+
 
 const container = document.querySelector('#container');
 
@@ -82,22 +80,29 @@ class Book {
 
             library.splice(this.key, 1);// This removes the book 
             this.book.remove();
+
             for (let i = 0; i < library.length; i++) {
 
                 reAssign(library[i])
-
             }
+            console.log(library[this.key])
+            console.log(library)
         })
 
 
         this.toggle.addEventListener('click', () => {
             console.log('clicked')
+
+            console.log(library)
+            console.log(library[this.key])
             if (this.read === true) {
+                // library[this.key].read = false;
                 this.read = false;
                 console.log(this)
                 this.statusCheck()
             } else {
 
+                // library[this.key].read = true;
                 this.read = true;
                 console.log(this)
                 this.statusCheck()
@@ -122,16 +127,12 @@ class Book {
     }
 
     statusCheck() {
-        console.log(library)
-        if (this.read == true) {
-            this.statusValue.textContent = 'Finished'
+        if (this.read === true) {
+            this.statusValue.textContent = 'Finished';
             this.book.classList.add('finished');
-
-
-        } else if (this.read == false) {
-            this.statusValue.textContent = 'Pending'
+        } else if (this.read === false) {
+            this.statusValue.textContent = 'Pending';
             this.book.classList.remove('finished');
-
         }
     }
 
@@ -195,32 +196,43 @@ function loadBook(bookData) {
 function saveData(data) {
     window.localStorage.setItem('bookdata', JSON.stringify(data))
 
-    console.log(localStorage.getItem('bookdata'));
+    console.log(`Saved ` + localStorage.getItem('bookdata'));
 }
 
 
 async function loadContent() {
 
-    if (!window.localStorage.getItem('bookdata')) {
+    let localStorage = JSON.parse(window.localStorage.getItem('bookdata')) !== null ? JSON.parse(window.localStorage.getItem('bookdata')) : [];
+    console.log(`Loading ` + localStorage.length + ' Books')
+    if (localStorage.length === 0) {
+        console.log(`No data found`)
         shelf.style.display = 'none'
 
     }
-    else {
-        console.log('Getting the local data')
+    else if (window.localStorage.getItem('bookdata') !== null) {
+        console.log('Getting the ' + localStorage.length + ' local data')
+        library = []
         let bookData = await JSON.parse(window.localStorage.getItem('bookdata'))
-        library = await [...bookData]
-        library.forEach((item) => {
+
+        let newarr = [...bookData]
+        newarr.forEach((item) => {
 
             let bookData = initBook(item.title, item.author, item.pages, item.read, item.key)
             loadBook(bookData);
+
+            library.push(bookData)
+
         })
+
+
         shelf.style.display = 'grid';
     }
 
 
 }
 
-loadContent()
+document.addEventListener('DOMContentLoaded', loadContent)
+
 
 
 button.addEventListener('click', () => { newBook(initBook(titleData.value, authorData.value, pageNumber.value, finish.checked)) })
@@ -228,12 +240,16 @@ button.addEventListener('click', () => { newBook(initBook(titleData.value, autho
 
 saveBtn.addEventListener('click', () => {
     saveData(library)
-
+    console.log(library)
     console.log(window.localStorage.getItem('bookdata'))
     console.log('saved')
 })
 
 
+clearBtn.addEventListener('click', () => {
+    window.localStorage.clear()
+    library.forEach(item => item.book.remove())
+    library = []
 
-
-window.localStorage.clear()
+    loadContent()
+});
