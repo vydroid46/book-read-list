@@ -4,90 +4,75 @@
 
 @tailwind utilities;
 
-
-
-
-
-
-
 .finished {
-
-   background-color: rgb(219, 255, 219); 
+  background-color: rgb(219, 255, 219);
 }
 
-.title, .author,.pages > span  {
+.title,
+.author,
+.pages > span {
   font-weight: bold;
   font-size: 1rem;
 }
 
 .status {
-   font-weight: bold;
+  font-weight: bold;
 }
 
-.status> span {
-   font-weight: 100;
+.status > span {
+  font-weight: 100;
 }
 
 .title {
-   font-size: 1.5rem;
+  font-size: 1.5rem;
 }
 
-
-
 .remove {
-   position: absolute;
+  position: absolute;
 
-   right: 0;
-   top: 0;
-padding: 2px;
-width: 30px;
-height: 30px;
-align-content: center;
-text-align: center;
-background-color: rgb(253, 189, 189);
-
+  right: 0;
+  top: 0;
+  padding: 2px;
+  width: 30px;
+  height: 30px;
+  align-content: center;
+  text-align: center;
+  background-color: rgb(253, 189, 189);
 }
 
 .toggle {
-   position: absolute;
-
-   right: 0;
-   
-padding: 2px;
-width: 30px;
-height: 30px;
-align-content: center;
-text-align: center;
-background-color: rgb(201, 194, 255);
+  position: absolute;
+  right: 0;
+  padding: 2px;
+  width: 30px;
+  height: 30px;
+  align-content: center;
+  text-align: center;
+  background-color: rgb(201, 194, 255);
 }
 
-
 .label {
-   font-weight: bold;
+  font-weight: bold;
 }
 
 .book-container {
-padding: 2em;
-position: relative;
-
+  padding: 2em;
+  position: relative;
 }
-
-
 
 .status {
-font-style: italic;
-   
+  font-style: italic;
 }
-
 
 @media (max-width: 500px) {
-   #container {
-      width: 80%;
+  #container {
+    width: 80%;
 
-      max-width: 300px;
-   }
+    max-width: 300px;
+  }
 
-   #bookshelf {
-     grid-template-columns:  repeat(auto-fit,minmax(200px,1fr));
-   }
+  #bookshelf {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 }
+
